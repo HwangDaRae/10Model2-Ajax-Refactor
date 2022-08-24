@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="UploadMapper">
+
+	<resultMap id="uploadSelectMap" type="com.model2.mvc.service.domain.Upload">
+		<result property="fileNo" column="fileNo" jdbcType="NUMERIC" />
+		<result property="fileCount" column="fileCount" jdbcType="NUMERIC" />
+		<result property="fileName" column="fileName" jdbcType="VARCHAR" />
+		<result property="file_path" column="file_path" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<!-- SQL : INSERT -->
+	<insert id="addUpload" parameterType="com.model2.mvc.service.domain.Upload">
+		INSERT INTO upload_file( fileNo, fileCount, fileName, file_path )
+		VALUES ( #{fileNo}, #{fileCount}, #{fileName}, #{file_path} )
+	</insert>
+	
+	<select id="getUploadFile" parameterType="string" resultType="com.model2.mvc.service.domain.Upload">
+		SELECT *
+		FROM upload_file
+		WHERE fileNo = #{value}
+	</select>
+	
+	<update id="updateUpload" parameterType="com.model2.mvc.service.domain.Upload">
+		UPDATE upload_file
+		SET fileCount = #{fileCount}, fileName = #{fileName:VARCHAR}, file_path=#{file_path:VARCHAR}
+		WHERE fileNo = #{fileNo} AND fileName = #{before_fileName}
+	</update>
+
+</mapper>

@@ -39,7 +39,7 @@ import com.model2.mvc.service.product.ProductService;
 import com.model2.mvc.service.product.impl.ProductServiceImpl;
 import com.model2.mvc.service.upload.UploadService;
 
-@RestController
+@Controller
 @RequestMapping("/product/*")
 public class ProductController {
 	
