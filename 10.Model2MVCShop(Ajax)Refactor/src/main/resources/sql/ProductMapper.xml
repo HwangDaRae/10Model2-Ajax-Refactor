@@ -75,12 +75,12 @@
 	</select>
 	
 	
-		
+	<!--
 	<select id="allProduct" parameterType="com.model2.mvc.common.Search" resultMap="productSelectMap">
 	SELECT *
 	FROM ( SELECT ROWNUM AS row_n, vt1.*
 			FROM ( SELECT vt.* 
-					FROM ( SELECT ROW_NUMBER() OVER(PARTITION BY p.prod_no ORDER BY t.order_data desc) as r, p.amount, p.prod_no, p.prod_name, p.price, p.reg_date, nvl(tran_status_code, 0) as proTranCode
+					FROM ( SELECT ROW_NUMBER() OVER(PARTITION BY p.prod_no ORDER BY t.order_data desc) as r, p.image_file, p.amount, p.prod_no, p.prod_name, p.price, p.reg_date, nvl(tran_status_code, 0) as proTranCode
 							FROM transaction t, product p 
 							WHERE t.prod_no(+)=p.prod_no ) vt 
 			 		WHERE r = 1
@@ -103,12 +103,48 @@
 			) vt2
 		WHERE row_n BETWEEN ((#{currentPage}-1)*#{pageSize}+1) AND #{currentPage}*#{pageSize}
 	</select>
-		
-		
-		
+	-->
+	
+	
+	
+	<select id="allProduct" parameterType="com.model2.mvc.common.Search" resultMap="productSelectMap">
+	SELECT *
+	FROM ( SELECT ROWNUM AS row_n, vt1.*
+			FROM ( SELECT vt.* 
+					FROM ( SELECT ROW_NUMBER() OVER(PARTITION BY p.prod_no ORDER BY t.order_data desc) as r, p.image_file, p.amount, p.prod_no, p.prod_name, p.price, p.reg_date, nvl(tran_status_code, 0) as proTranCode
+							FROM transaction t, product p 
+							WHERE t.prod_no(+)=p.prod_no ) vt 
+			 		WHERE r = 1
+					<if test="searchCondition != null and searchKeyword != ''">
+						<if test="searchCondition == 0">
+							AND PROD_NO=#{searchKeyword}
+						</if>
+						<if test="searchCondition == 1">
+							AND PROD_NAME LIKE '%'||#{searchKeyword}||'%'
+						</if>
+						<if test="searchCondition == 2">
+							AND PRICE=#{searchKeyword}
+						</if>
+					</if>
+					
+					<if test="priceSort != '' and priceSort != null">
+					ORDER BY PRICE ${priceSort}
+					</if>
+				) vt1
+			) vt2
+	</select>
+	
+	
+	
 	<update id="updateProduct" parameterType="com.model2.mvc.service.domain.Product">
 		UPDATE PRODUCT set PROD_DETAIL=#{prodDetail}, MANUFACTURE_DAY=TO_CHAR(TO_DATE(#{manuDate}),'YYYYMMDD'), PRICE=#{price}, AMOUNT=#{amount}, IMAGE_FILE=#{fileName} where PROD_NO=#{prodNo}
 	</update>
+	
+	
+	
+	<select id="autocompleteProduct" resultType="string">
+		SELECT DISTINCT prod_name FROM product
+	</select>
   	
 </mapper>
 

@@ -64,8 +64,8 @@ public class ProductController {
 	@Value("#{commonProperties['pageSize']}")
 	//@Value("#{commonProperties['pageSize'] ?: 2}")
 	int pageSize;
-							  
-	@RequestMapping(value = "listProduct/{menu}", method = RequestMethod.GET) 
+	
+	@RequestMapping(value = "listProduct/{menu}") 
 	public String listProduct( @PathVariable String menu, Model model, HttpSession session, Search search) throws Exception {
 		System.out.println("/product/listProduct : GET");
 		System.out.println(search);
@@ -100,7 +100,7 @@ public class ProductController {
 		search = new Search(currentPage, searchCondition, searchKeyword, pageSize, search.getPriceSort());
 		
 		// 검색정보를 넣어서 현재 페이지의 list를 가져온다
-		List<Product> prodList = productServiceImpl.getProductList(search);		
+		List<Product> prodList = productServiceImpl.getProductList(search);
 		int totalCount = productServiceImpl.getProductTotalCount(search);		
 		Page resultPage = new Page(currentPage, totalCount, pageUnit, pageSize);
 		
@@ -108,10 +108,16 @@ public class ProductController {
 			System.out.println(getClass() + " : " + prodList.get(i).toString());
 		}
 		
+		List<String> uploadList = new ArrayList<String>();
+		for (int i = 0; i < prodList.size(); i++) {
+			uploadList.add(uploadServiceImpl.getUploadFile(prodList.get(i).getFileName()).get(0).getFileName());
+		}
+		
 		model.addAttribute("resultPage", resultPage);
 		model.addAttribute("searchVO", search);
 		model.addAttribute("list", prodList);
 		model.addAttribute("listSize", prodList.size());
+		model.addAttribute("uploadList", uploadList);
 		model.addAttribute("menu", menu);
 		
 		return "forward:/product/listProduct.jsp";
@@ -163,15 +169,22 @@ public class ProductController {
 			System.out.println(getClass() + " : " + prodList.get(i).toString());
 		}
 		
+		List<String> uploadList = new ArrayList<String>();
+		for (int i = 0; i < prodList.size(); i++) {
+			uploadList.add(uploadServiceImpl.getUploadFile(prodList.get(i).getFileName()).get(0).getFileName());
+		}
+		
 		model.addAttribute("resultPage", resultPage);
 		model.addAttribute("searchVO", search);
 		model.addAttribute("list", prodList);
 		model.addAttribute("listSize", prodList.size());
+		model.addAttribute("uploadList", uploadList);
 		model.addAttribute("menu", menu);
 		
 		return "forward:/product/listProduct.jsp";
 	}
-	
+
+	/*
 	@RequestMapping( value = "getProduct/{prodNo}/{menu}", method = RequestMethod.GET )
 	public String getProduct(@PathVariable int prodNo, @PathVariable String menu, Model model ) throws Exception {
 		System.out.println("/getProduct : GET");
@@ -182,7 +195,7 @@ public class ProductController {
 		model.addAttribute("count", uploadList.get(0).getFileCount());
 		return "forward:/product/getProduct.jsp";
 	}
-	
+	*/
 	@RequestMapping( value = "addProductView", method = RequestMethod.GET )
 	public String addProductView() throws Exception {
 		System.out.println("/addProductView : GET");
@@ -202,13 +215,13 @@ public class ProductController {
 		String fileNo = sdf1.format( Calendar.getInstance().getTime() ) + "";
 		
 		for(int i = 0; i < multiFileList.size(); i++) {
-			multiFileList.get(i).transferTo(new File("C:\\Users\\bitcamp\\git\\09Model2-jQuery-Refactor\\09.Model2MVCShop(jQuery)Refactor\\src\\main\\webapp\\images\\uploadFiles\\",
+			multiFileList.get(i).transferTo(new File("C:\\Users\\903-19\\git\\10Model2-Ajax-Refactor\\10.Model2MVCShop(Ajax)Refactor\\src\\main\\webapp\\images\\uploadFiles\\",
 					multiFileList.get(i).getOriginalFilename()));
 			uploadVO = new Upload();
 			uploadVO.setFileNo(fileNo);
 			uploadVO.setFileCount(multiFileList.size());
 			uploadVO.setFileName(multiFileList.get(i).getOriginalFilename());
-			uploadVO.setFile_path("C:\\Users\\bitcamp\\git\\09Model2-jQuery-Refactor\\09.Model2MVCShop(jQuery)Refactor\\src\\main\\webapp\\images\\uploadFiles\\");
+			uploadVO.setFile_path("C:\\Users\\903-19\\git\\10Model2-Ajax-Refactor\\10.Model2MVCShop(Ajax)Refactor\\src\\main\\webapp\\images\\uploadFiles\\");
 			uploadList.add(uploadVO);
 		}
 		

@@ -71,4 +71,10 @@ public class ProductDaoImpl implements ProductDao {
 		return sqlSession.selectOne("ProductMapper.getNonMemberPurchase", tranNo);
 	}
 
+	@Override
+	public List<String> autocompleteProduct() throws Exception {
+		System.out.println(getClass() + ".autocompleteProduct()");
+		return sqlSession.selectList("ProductMapper.autocompleteProduct");
+	}
+
 }

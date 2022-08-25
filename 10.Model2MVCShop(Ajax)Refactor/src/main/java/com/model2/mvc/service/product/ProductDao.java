@@ -18,6 +18,8 @@ public interface ProductDao {
 	public Product updateProduct(Product productVO) throws Exception;
 	
 	public Product getNonMemberPurchase(int tranNo) throws Exception;
+	
+	public List<String> autocompleteProduct() throws Exception;
 }
 
 

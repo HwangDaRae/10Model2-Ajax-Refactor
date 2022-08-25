@@ -6,7 +6,10 @@
 <head>
 <meta charset="EUC-KR">
 <link rel="stylesheet" href="/css/admin.css" type="text/css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
 <script src="//code.jquery.com/jquery-2.1.4.js" type="text/javascript"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
 <script type="text/javascript">
 
@@ -42,6 +45,8 @@ $(function(){
 	
 	$(".ct_list_").bind("click",function(){
 		var id = $(this).parent().parent().attr("id");
+		var ajax_id = $(this).text();
+		alert(ajax_id);
 		var proTranCode = $($(this).parent().parent().children()[2]).attr("id");
 		
 		if($(this).text().trim() == "-배송하기"){
@@ -49,10 +54,76 @@ $(function(){
 		}else if(proTranCode == 0){
 			location.href="/product/getProduct/"+id+"/${ menu }";
 		}else{
-			location.href="/product/updateProductView/"+id+"/${ menu }";
+			
+			$.ajax(
+					{
+						url : "/product/getProduct/"+id+"/${ menu }" ,
+						method : "GET" ,
+						dataType : "json" ,
+						headers : {
+							"Accept" : "application/json",
+							"Content-Type" : "application/json"
+						},
+						success : function(JSONData , status) {
+
+							//Debug...
+							//alert(status);
+							//Debug...
+							//alert("JSONData : \n"+JSONData);
+							
+							var displayValue = "<h3>"
+											+"상품번호 : "+JSONData.productVO.prodNo+"<br/>"
+											+"상품이름 : "+JSONData.productVO.prodName+"<br/>"
+											+"상품상세정보 : "+JSONData.productVO.prodDetail+"<br/>"
+											+"제조일자 : "+JSONData.productVO.manuDate+"<br/>"
+											+"가격 : "+JSONData.productVO.price+"<br/>"
+											+"희망배송일 : "+JSONData.productVO.regDate+"<br/>"
+											+"수량 : "+JSONData.productVO.amount+"<br/>"
+											+"상품코드 : "+JSONData.productVO.proTranCode+"<br/>"
+											+"JSONData.uploadList.file_path : "+JSONData.uploadList[0].file_path+"<br/>"
+											+"JSONData.uploadList.fileName : "+JSONData.uploadList[0].fileName+"<br/>"
+											+"이미지개수 : "+JSONData.count+"<br/>"
+											+"</h3>";
+										
+							//Debug...
+							alert("displayValue : " + displayValue);
+							$("h3").remove();
+							$( "#" + ajax_id + "" ).html(displayValue);
+						}
+				});
+			
 		}
 	})
 	
+	//Autocomplete
+	$("#searchId").bind("click",function(){
+		$.ajax(
+				{
+					url : "/product/autocompleteProduct" ,
+					method : "POST" ,
+					dataType : "json" ,
+					headers : {
+						"Accept" : "application/json",
+						"Content-Type" : "application/json"
+					},
+					success : function(JSONData , status) {
+						$( "#searchId" ).autocomplete({
+							  source: JSONData
+						});
+					}
+				});
+	});
+	
+	var page = 1;
+
+	$(window).scroll(function() {
+		alert("$(window).scrollTop() : " + $(window).scrollTop());
+		alert("$(document).height() : " + $(document).height());
+		alert("$(window).height() : " + $(window).height());
+	    if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+	    }
+	});
+		
 })
 
 
@@ -117,7 +188,7 @@ function fncGetSortList(priceSort) {
 				<option value="1" ${ (searchVO.searchCondition == '1')?"selected":"" } >상품명</option>
 				<option value="2" ${ (searchVO.searchCondition == '2')?"selected":"" } >상품가격</option>
 			</select>
-			<input type="text" name="searchKeyword" value="${ searchVO.searchKeyword }" class="ct_input_g" style="width:200px; height:19px" />
+			<input id="searchId" type="text" name="searchKeyword" value="${ searchVO.searchKeyword }" class="ct_input_g" style="width:200px; height:19px" />
 		</td>
 	
 		
@@ -148,7 +219,7 @@ function fncGetSortList(priceSort) {
 		</td>
 	</tr>
 	<tr>
-		<td class="ct_list_b" width="100">No</td>
+		<td class="ct_list_b" width="100">image</td>
 		<td class="ct_line02"></td>
 		<td class="ct_list_b" width="150">상품명</td>
 		<td class="ct_line02"></td>
@@ -167,13 +238,15 @@ function fncGetSortList(priceSort) {
 	<c:if test="${ !empty sessionScope.user && sessionScope.user.role == 'admin' }">
 		<c:forEach var="i" begin="0" end="${ size-1 }" step="1">
 			<tr class="ct_list_pop" id="${ list[i].prodNo }">
-				<td align="center">${ size-i }</td>
+				<td align="center">
+					<img src="/images/uploadFiles/${ uploadList[i] }"/>
+				</td>
 				<td></td>
-					<td align="left">
-						<!-- 판매코드가 0이 아니면 상품수정 불가 -->
-						<b class="ct_list_">${ list[i].prodName }</b>
-						<%-- <a href="/product/updateProductView/${ list[i].prodNo }/${ menu }">${ list[i].prodName }</a> --%>
-					</td>				
+				<td align="left">
+					<!-- 판매코드가 0이 아니면 상품수정 불가 -->
+					<b class="ct_list_">${ list[i].prodName }</b>
+					<%-- <a href="/product/updateProductView/${ list[i].prodNo }/${ menu }">${ list[i].prodName }</a> --%>
+				</td>				
 				<td></td>
 				<td align="left">${ list[i].price }</td>
 				<td></td>
@@ -199,7 +272,7 @@ function fncGetSortList(priceSort) {
 				</td>	
 			</tr>
 			<tr>
-				<td colspan="11" bgcolor="D6D7D6" height="1"></td>
+				<td id="${ list[i].prodName }" colspan="11" bgcolor="D6D7D6" height="1"></td>
 			</tr>
 		</c:forEach>
 	</c:if>

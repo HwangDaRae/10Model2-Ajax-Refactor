@@ -4,6 +4,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,18 +31,14 @@ public class UserRestController {
 	}
 	
 	@RequestMapping( value="json/getUser/{userId}", method=RequestMethod.GET )
-	public User getUser( @PathVariable String userId ) throws Exception{
-		
+	public User getUser( @PathVariable String userId ) throws Exception{		
 		System.out.println("/user/json/getUser : GET");
-		
 		//Business Logic
 		return userService.getUser(userId);
 	}
 
 	@RequestMapping( value="json/login", method=RequestMethod.POST )
-	public User login(	@RequestBody User user,
-									HttpSession session ) throws Exception{
-	
+	public User login( @RequestBody User user, HttpSession session ) throws Exception{
 		System.out.println("/user/json/login : POST");
 		//Business Logic
 		System.out.println("::"+user);

@@ -11,10 +11,46 @@
 
 <script type="text/javascript">
 $(function(){
-	$("b").bind("click",function(){
-		location.href = "/user/getUser?userId="+$(this).text();
-	})
+	$( ".ct_list_pop td:nth-child(3)" ).on("click" , function() {
+		var displayValue;
+		//Debug..
+		alert(  $( this ).text().trim() );
+		var userId = $(this).text().trim();
+		$.ajax(
+				{
+					url : "/user/json/getUser/"+userId ,
+					method : "GET" ,
+					dataType : "json" ,
+					headers : {
+						"Accept" : "application/json",
+						"Content-Type" : "application/json"
+					},
+					success : function(JSONData , status) {
+
+						//Debug...
+						alert(status);
+						//Debug...
+						alert("JSONData : \n"+JSONData);
+						
+						displayValue = "<h3>"
+													+"아이디 : "+JSONData.userId+"<br/>"
+													+"이  름 : "+JSONData.userName+"<br/>"
+													+"이메일 : "+JSONData.email+"<br/>"
+													+"ROLE : "+JSONData.role+"<br/>"
+													+"등록일 : "+JSONData.regDateString+"<br/>"
+													+"</h3>";
+						//Debug...									
+						alert("displayValue : " + displayValue);
+						//$("td:contains('전체')").text(displayValue);
+						$("h3").remove();
+						//$( "#"+userId+"" ).html(displayValue);
+						//$( "#"+userId ).html(displayValue);						
+						$( "#dialog" ).dialog();
+					}
+			});
+	});
 })
+
 </script>
 
 <script type="text/javascript">
@@ -28,6 +64,10 @@ $(function(){
 </head>
 
 <body bgcolor="#ffffff" text="#000000">
+
+<div id="dialog" title="Basic dialog">
+  <p>This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the &apos;x&apos; icon.</p>
+</div>
 
 <div style="width:98%; margin-left:10px;">
 
@@ -102,7 +142,7 @@ $(function(){
 			<td align="center">${ i }</td>
 			<td></td>
 			<td align="left">
-				<b>${user.userId}</b>
+				${user.userId}
 			</td>
 			<td></td>
 			<td align="left">${user.userName}</td>

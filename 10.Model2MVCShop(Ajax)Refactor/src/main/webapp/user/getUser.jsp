@@ -12,7 +12,7 @@
 <script type="text/javascript">
 $(function(){
 	$("td.ct_btn01:contains('확인')").bind("click",function(){
-		history.go(-1);
+		location.href = "/user/listUser";
 	})
 	
 	$("td.ct_btn01:contains('수정')").bind("click",function(){

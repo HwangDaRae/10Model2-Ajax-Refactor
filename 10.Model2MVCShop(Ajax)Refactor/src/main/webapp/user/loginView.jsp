@@ -2,54 +2,112 @@
 
 <html>
 <head>
-<title>로그인 화면</title>
-
-<link rel="stylesheet" href="/css/admin.css" type="text/css">
-<script src="//code.jquery.com/jquery-2.1.4.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-$(function(){
-	$("img[width='55']").bind("click",function(){
-		fncLogin()
-	})
+	<meta charset="EUC-KR">
 	
-	$("img[width='71']").bind("click",function(){
-		location.href = "/user/addUser";
-	})
-});
-</script>
+	<title>로그인 화면</title>
+	
+	<link rel="stylesheet" href="/css/admin.css" type="text/css">
+ 	<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+	
+	<!-- CDN(Content Delivery Network) 호스트 사용 -->
+	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<!-- dialog function을 못 찾는다 -->
+  	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+	<script type="text/javascript">
+	   
+		$( function() {
+			
+			//==> DOM Object GET 3가지 방법 ==> 1. $(tagName) : 2.(#id) : 3.$(.className)
+			$("#userId").focus();
+			
+			//==>"Login"  Event 연결
+			$("img[src='/images/btn_login.gif']").on("click" , function() {
 
-<script type="text/javascript">
-	function fncLogin() {
-		var id=document.loginForm.userId.value;
-		var pw=document.loginForm.password.value;
-		if(id == null || id.length <1) {
-			alert('ID 를 입력하지 않으셨습니다.');
-			document.loginForm.userId.focus();
-			return;
-		}
+				var id=$("input:text").val();
+				var pw=$("input:password").val();
+				
+				if(id == null || id.length <1) {
+					alert('ID 를 입력하지 않으셨습니다.');
+					$("input:text").focus();
+					return;
+				}
+				
+				if(pw == null || pw.length <1) {
+					alert('패스워드를 입력하지 않으셨습니다.');
+					$("input:password").focus();
+					return;
+				}
+				
+				$.ajax( 
+						{
+							url : "/user/json/login",
+							method : "POST" ,
+							dataType : "json" ,
+							headers : {
+								"Accept" : "application/json",
+								"Content-Type" : "application/json"
+							},
+							data : JSON.stringify({
+								userId : id,
+								password : pw
+							}),
+							success : function(JSONData , status) {
+								//Debug...
+								//alert(status);
+								//alert("JSONData : \n"+JSONData);
+								alert( "JSON.stringify(JSONData) : \n"+JSON.stringify(JSONData) );
+								
+								if( JSONData != null ){
+									//[방법1]
+									//$(window.parent.document.location).attr("href","/index.jsp");
+									
+									//[방법2]
+									//window.parent.document.location.reload();
+									
+									//[방법3]
+									$(window.parent.frames["topFrame"].document.location).attr("href","/layout/top.jsp");
+									$(window.parent.frames["leftFrame"].document.location).attr("href","/layout/left.jsp");
+									$(window.parent.frames["rightFrame"].document.location).attr("href","/user/getUser?userId="+JSONData.userId);
+									
+									//==> 방법 1 , 2 , 3 결과 학인
+								}else{
+									alert("아이디 , 패스워드를 확인하시고 다시 로그인...");
+								}
+							}
+				}); 
+								
+			});
+		});
 		
-		if(pw == null || pw.length <1) {
-			alert('패스워드를 입력하지 않으셨습니다.');
-			document.loginForm.password.focus();
-			return;
-		}
-	    document.loginForm.submit();
-	}
+		
+		//============= 회원원가입화면이동 =============
+		$( function() {
+			$("img[src='/images/btn_add.gif']").on("click" , function() {
+				self.location = "/user/addUser"
+			});
+			//==> 추가된부분 : "addUser"  Event 연결
+			/* 
+			var dialog;
+			dialog = $( "#dialog-form" ).dialog({
+		      autoOpen: false,
+		      height: 600,
+		      width: 550,
+		      modal: true
+		    });
+			$("img[src='/images/btn_add.gif']").on("click" , function() {
+				dialog.dialog( "open" );
+			}); */
+		});
+		
+	</script>		
 	
-	//Call Back Method 이용 onload 시 Event 처리
-	window.onload = function(){
-		document.getElementById("userId").focus();
-	}
-</script>
-
 </head>
 
 <body bgcolor="#ffffff" text="#000000" >
 
- <form name="loginForm"  method="post" action="/user/login" target="_parent">
- 
-<div align="center">
+<form>
+
+<div align="center" >
 
 <TABLE WITH="100%" HEIGHT="100%" BORDER="0" CELLPADDING="0" CELLSPACING="0">
 <TR>
@@ -88,7 +146,7 @@ $(function(){
                 	<img src="/images/text_id.gif" width="100" height="30"/>
                 </td>
                 <td height="30">
-                  <input 	type="text" name="userId"  class="ct_input_g" 
+                  <input 	type="text" name="userId"  id="userId"  class="ct_input_g" 
                   				style="width:180px; height:19px"  maxLength='50'/>          
           		</td>
                 <td width="20" height="30">&nbsp;</td>
@@ -111,13 +169,12 @@ $(function(){
    				    <table width="136" height="20" border="0" cellpadding="0" cellspacing="0">
                        <tr> 
                          <td width="56">
-                         	<!-- <a href="javascript:fncLogin();"> -->
-                       		<img src="/images/btn_login.gif" width="55" height="20" border="0"/>
+                         		<img src="/images/btn_login.gif" width="56" height="20" border="0"/>
                          </td>
                          <td width="10">&nbsp;</td>
                          <td width="70">
-                         	<!-- <a href="/user/addUser"> -->
-                       		<img src="/images/btn_add.gif" width="71" height="20" border="0">
+                         		<div id="dialog-form"></div>
+                       			<img src="/images/btn_add.gif" width="70" height="20" border="0">
                          </td>
                        </tr>
                      </table>

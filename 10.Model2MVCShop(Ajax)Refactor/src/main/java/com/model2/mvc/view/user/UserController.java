@@ -20,7 +20,6 @@ import com.model2.mvc.common.Search;
 import com.model2.mvc.service.domain.User;
 import com.model2.mvc.service.user.UserService;
 
-
 //==> 회원관리 Controller
 @Controller
 @RequestMapping("/user/*")
@@ -41,8 +40,7 @@ public class UserController {
 	
 	@Value("#{commonProperties['pageSize']}")
 	int pageSize;
-	
-	
+
 	//@RequestMapping("/addUserView.do")
 	//public String addUserView() throws Exception {
 	@RequestMapping( value="addUser", method=RequestMethod.GET )

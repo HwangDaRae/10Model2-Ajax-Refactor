@@ -40,18 +40,18 @@ $(function(){
 			return;
 		}
 		
-		var phone1 = $("input[name='phone1']").va()
-		var phone2 = $("input[name='phone2']").va()
-		var phone3 = $("input[name='phone3']").va()
+		var phone1 = $("option:selected").val()
+		var phone2 = $("input[name='phone2']").val()
+		var phone3 = $("input[name='phone3']").val()
 		
 		if(phone2 != "" && phone3 != "") {
-			$("input[name='phone']").va( phone1 + "-" + phone2 + "-" + phone3 )
+			$("input[name='phone']").val( phone1 + "-" + phone2 + "-" + phone3 )
 		} else {
-			$("input[name='phone']").va(" ")
+			// val(" ")하면 400 에러난다
+			$("input[name='phone']").val("")
 		}
 		
-		$("form").attr("method","post").attr("action","/user/addUser").submit();
-
+		$("form").attr("method" , "POST").attr("action" , "/user/addUser").submit();
 	})
 	
 	$("select").bind("change",function(){
@@ -116,7 +116,7 @@ function PortalJuminCheck(fieldValue){
 
 <body bgcolor="#ffffff" text="#000000">
 
-<form name="detailForm"  method="post" >
+<form name="detailForm"  method="post" action="/user/addUser">
 
 <table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
 	<tr>

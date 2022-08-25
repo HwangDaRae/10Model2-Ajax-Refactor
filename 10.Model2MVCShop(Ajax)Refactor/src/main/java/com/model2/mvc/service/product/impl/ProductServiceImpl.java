@@ -57,4 +57,10 @@ public class ProductServiceImpl implements ProductService {
 		return productDAO.getNonMemberPurchase(tranNo);
 	}
 
+	@Override
+	public List<String> autocompleteProduct() throws Exception {
+		System.out.println(getClass() + ".autocompleteProduct()");
+		return productDAO.autocompleteProduct();
+	}
+
 }
