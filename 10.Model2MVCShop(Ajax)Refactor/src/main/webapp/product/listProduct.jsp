@@ -114,15 +114,16 @@ $(function(){
 				});
 	});
 	
-	var page = 1;
+	/* var page = 1;
 
 	$(window).scroll(function() {
-		alert("$(window).scrollTop() : " + $(window).scrollTop());
-		alert("$(document).height() : " + $(document).height());
-		alert("$(window).height() : " + $(window).height());
+		//alert("$(window).scrollTop() : " + $(window).scrollTop());
+		//alert("$(document).height() : " + $(document).height());
+		//alert("$(window).height() : " + $(window).height());
 	    if ($(window).scrollTop() == $(document).height() - $(window).height()) {
+	    	alert('a');
 	    }
-	});
+	}); */
 		
 })
 
