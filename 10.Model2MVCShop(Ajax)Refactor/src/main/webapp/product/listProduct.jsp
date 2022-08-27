@@ -86,7 +86,7 @@ $(function(){
 											+"</h3>";
 										
 							//Debug...
-							alert("displayValue : " + displayValue);
+							console.log("displayValue : " + displayValue);
 							$("h3").remove();
 							$( "#" + ajax_id + "" ).html(displayValue);
 						}
@@ -113,17 +113,86 @@ $(function(){
 					}
 				});
 	});
-	
-	/* var page = 1;
 
+	/*
+	var page = 1;
 	$(window).scroll(function() {
-		//alert("$(window).scrollTop() : " + $(window).scrollTop());
-		//alert("$(document).height() : " + $(document).height());
-		//alert("$(window).height() : " + $(window).height());
-	    if ($(window).scrollTop() == $(document).height() - $(window).height()) {
-	    	alert('a');
-	    }
-	}); */
+		var testValue = "$(document).height() - 100 : " + parseInt($(document).height() - 100) + "\n"
+						+ "$(window).height() : " + parseInt($(window).height()) + "\n"
+						+ "$(window).scrollTop() : " + parseInt($(window).scrollTop()) + "\n";
+		console.log(testValue);
+	    if ($(document).height() + 300 <= parseInt($(window).height()) + parseInt($(window).scrollTop()) ){
+	    	alert("scroll 작동");
+	    	
+	    	$.ajax(
+	    			{
+	    				url : "/product/json/listProduct" ,
+	    				data : {
+	    					currentpage : page
+	    				},
+						method : "POST" ,
+						dataType : "json" ,
+						headers : {
+							"Accept" : "application/json",
+							"Content-Type" : "application/json"
+						},
+						success : function(JSONData , status) {
+						var displayValue = "<h3>"
+										+"JSONData.resultPage.currentPage : "+JSONData.resultPage.currentPage+"<br/>"
+										+"JSONData.resultPage.totalCount : "+JSONData.resultPage.totalCount+"<br/>"
+										+"JSONData.resultPage.maxPage : "+JSONData.resultPage.maxPage+"<br/>"
+										+"JSONData.resultPage.beginUnitPage : "+JSONData.resultPage.beginUnitPage+"<br/>"
+										+"JSONData.resultPage.endUnitPage : "+JSONData.resultPage.endUnitPage+"<br/>"
+										+"JSONData.searchVO.searchCondition : "+JSONData.searchVO.searchCondition+"<br/>"
+										+"JSONData.searchVO.searchKeyword : "+JSONData.searchVO.searchKeyword+"<br/>"
+										+"JSONData.searchVO.pageSize : "+JSONData.searchVO.pageSize+"<br/>"
+										+"JSONData.searchVO.priceSort : "+JSONData.searchVO.priceSort+"<br/>"
+										+"JSONData.list[0].prodNo : "+JSONData.list[0].prodNo+"<br/>"
+										+"JSONData.listSize : "+JSONData.listSize+"<br/>"
+										+"JSONData.menu : "+JSONData.menu+"<br/>"
+										+"</h3>";
+							alert(status);
+							
+							$.each(JSONData, function(index, item){
+								console.log('each 실행, item : ' + item);
+								
+								//form의 3번째 자식 table에 붙인다
+								var displayValue = 
+										"<tr class='ct_list_pop' id='"+item[index]+"'>"
+											+"<td align='center'><img src='/images/uploadFiles/"+JSONData.uploadList[index]+"/></td>"
+											+"<td></td>"
+											+"<td align='left'><b class='ct_list_'>"+JSONData.list[index]+"</b></td>"
+											+"<td></td>"
+											+"<td align='left'>"+JSONData.list[index].price+"</td>"
+											+"<td></td>"
+											+"<td align='left'>"+JSONData.list[index].regDate+"</td>"
+											+"<td></td>"
+											+"<td align='left'>"
+												+"<c:if test='${ fn:trim(list[i].proTranCode) == "+0+" }'>판매중</c:if>"
+												+"<c:if test='${ fn:trim(list[i].proTranCode) == "+1+" }'>구매완료<c:if test='${ menu == "+manage+" }'><b class='ct_list_'>-배송하기</b></c:if></c:if>"
+												+"<c:if test='${ fn:trim(list[i].proTranCode) == "+2+" }'>배송중</c:if>"
+												+"<c:if test='${ fn:trim(list[i].proTranCode) == "+3+" }'>배송완료</c:if>"
+											+"</td>"
+										+"</tr>"
+										+"<tr>"
+											+"<td id='"+JSONData.list[index].prodName+"' colspan='11' bgcolor='D6D7D6' height='1'></td>"
+										+"</tr>";
+										
+										console.log("displayValue : " + displayValue);
+										$( $("form").children()[3] ).append(displayValue);
+
+						})//$.each
+					}//success
+	    		});//end of ajax
+			
+				//현재페이지 증가
+				page++;
+	    		
+	    	}//end of if
+	    });//end of scroll
+	*/
+	
+	
 		
 })
 

@@ -65,7 +65,7 @@ public class ProductController {
 	//@Value("#{commonProperties['pageSize'] ?: 2}")
 	int pageSize;
 	
-	@RequestMapping(value = "listProduct/{menu}") 
+	@RequestMapping(value = "listProduct/{menu}", method = RequestMethod.GET) 
 	public String listProduct( @PathVariable String menu, Model model, HttpSession session, Search search) throws Exception {
 		System.out.println("/product/listProduct : GET");
 		System.out.println(search);
