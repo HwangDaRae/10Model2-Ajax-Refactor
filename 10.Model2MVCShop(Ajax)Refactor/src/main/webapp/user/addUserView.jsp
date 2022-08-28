@@ -68,8 +68,8 @@ $(function(){
 	})
 
 	$("input[name='ssn']").bind("change",function(){
-		var ssn1, ssn2; 
-		var nByear, nTyear; 
+		var ssn1, ssn2;
+		var nByear, nTyear;
 		var today; 
 
 		ssn = $("input[name='ssn']").val()
