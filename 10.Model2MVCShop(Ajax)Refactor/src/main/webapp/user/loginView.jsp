@@ -21,7 +21,7 @@
 		.validateTips { border: 1px solid transparent; padding: 0.3em; }
 	</style>
 	<!-- CDN(Content Delivery Network) 호스트 사용 -->
-	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+  	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<!-- dialog function을 못 찾는다 -->
 	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 	<script type="text/javascript">
@@ -93,7 +93,7 @@
 		$( function() {
 			var dialog, form;
 			
-			emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+			//emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
 			userId = $( "#userId" ),
 			password = $( "#password" ),
 			password2 = $( "#password2" ),
@@ -103,7 +103,7 @@
 			phone = $( "#phone" ),
 			email = $( "#email" ),
 			//dialog의 모든 text
-			allFields = $( [] ).add( userId ).add( password ).add( userName ).add( ssn ).add( addr ).add( phone ).add( email ),
+			allFields = $( [] ).add( userId ).add( password ).add( password2 ).add( userName ).add( ssn ).add( addr ).add( phone ).add( email ),
 			tips = $( ".validateTips" );
 			
 			//요휴성 체크 결과를 보여주는 란이 노란색이 되고 서서히 색이 사라진다
@@ -112,11 +112,10 @@
 					setTimeout(function() {
 				    	tips.removeClass( "ui-state-highlight", 2500 );
 					}, 500 );
-			}
+			}//end of updateTips( t )
 
 			//입력필드가 빨간색이 되고 유효성 체크 결과를 보여주는 란에 메시지가 나온다
 			function checkLength( o, n, min, max ) {
-				console.log(o.val());
 				if ( o.val().length > max || o.val().length < min ) {
 					//유효성 검사에서 적합하지 않으면 text가 빨간색이 된다
 					o.addClass( "ui-state-error" );
@@ -125,19 +124,9 @@
 			    } else {
 			    	return true;
 			    }
-			}
+			}//end of checkLength( o, n, min, max )
 
-			//비밀번호 확인
-			function checkPassword( password, password2, n, min, max ) {
-		    	if ( parseInt(password.val()) != parseInt(password2.val()) ) {
-					//비밀번호 확인의 길이가 유효성 검사에 적합하지 않으면 빨간색이 된다
-					password.addClass( "ui-state-error" );
-				    updateTips( "비밀번호가 일치하지 않습니다" );
-				    return false;
-				}
-				return true;
-			}
-
+			//이메일 체크 이걸로 안함
 			function checkRegexp( o, regexp, n ) {
 				if ( !( regexp.test( o.val() ) ) ) {
 					o.addClass( "ui-state-error" );
@@ -146,7 +135,25 @@
 				} else {
 				    return true;
 				}	
-			}
+			}//end of checkRegexp( o, regexp, n )
+			
+			//주민등록번호 체크
+			function PortalJuminCheck(fieldValue){
+			    var pattern = /^([0-9]{6})-?([0-9]{7})$/;
+				var num = fieldValue;
+			    if (!pattern.test(num)) return false; 
+			    num = RegExp.$1 + RegExp.$2;
+
+				var sum = 0;
+				var last = num.charCodeAt(12) - 0x30;
+				var bases = "234567892345";
+				for (var i=0; i<12; i++) {
+					if (isNaN(num.substring(i,i+1))) return false;
+					sum += (num.charCodeAt(i) - 0x30) * (bases.charCodeAt(i) - 0x30);
+				}
+				var mod = sum % 11;
+				return ((11 - mod) % 10 == last) ? true : false;
+			}//end of PortalJuminCheck(fieldValue)
 			
 			//user정보를 db로 보낸다
 			function addUser() {
@@ -158,58 +165,66 @@
 				//유효성검사
 				//object, 이름, 최소길이, 최대길이
 				valid = valid && checkLength( userId, "아이디", 1, 20 );
-				console.log("1 : " + valid);
+				
+				//keyup, keydown, change했을 때 db가서 모든 userId랑 비교해 있으면 빨간색 경고 없으면 가입할 수 있다
+				$.ajax({
+							url : "/user/json/checkDuplication",
+				})//end of ajax
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
 				valid = valid && checkLength( password, "비밀번호", 1, 10 );
-				console.log("2 : " + valid);
 				valid = valid && checkLength( password2, "비밀번호 확인", 1, 10 );
-				console.log("3 : " + valid);
-				valid = valid && checkLength( userName, "이름", 0, 50 );
-				console.log("4 : " + valid);
-				
-				valid = valid && checkRegexp( userId, /^[a-z]([0-9a-z_\s])+$/i, "Username may consist of a-z, 0-9, underscores, spaces and must begin with a letter." );
-				console.log("5 : " + valid);
-				valid = valid && checkRegexp( password, /^([0-9a-zA-Z])+$/, "Password field only allow : a-z 0-9" );
-				console.log("6 : " + valid);
-				valid = valid && checkRegexp( email, emailRegex, "eg. ui@jquery.com" );
-				console.log("7 : " + valid);
-				
-				//valid = valid && checkPassword( password, password2, "비밀번호 확인", 1, 10 );
-				console.log(password.val().trim());
-				console.log(password.val().trim().length);
-				console.log(password2);
-				console.log(password2.val().trim());
-				console.log(password2.val().trim().length);
-				if( false && false && true ){
-					console.log('===' + true);
-				}else{
-					console.log('===' + false);
-				}
-				
-				if( password.val().trim().length != 0 && password2.val.trim().length != 0 && (parseInt(password.val()) != parseInt(password2.val())) ) {
-					password2.addClass( "ui-state-error" );
-					updateTips( "비밀번호가 일치하지 않습니다" );
-					valid = true;
-				}else{
-					valid = false;
-				}
-				console.log("8 : " + valid);
 
+				if( password.val().trim().length != 0 && password2.val().trim().length != 0 ){
+					if( parseInt(password.val()) == parseInt(password2.val()) ) {
+						password.removeClass( "ui-state-error" );
+						password2.removeClass( "ui-state-error" );
+						valid = true;
+					}else{
+						password2.addClass( "ui-state-error" );
+						updateTips( "비밀번호가 일치하지 않습니다" );
+						valid = false;
+					}
+				}
+				
+				valid = valid && checkLength( userName, "이름", 1, 50 );
+				
+				if(email.val() != ""){
+					if(email.val().indexOf('@') < 1 || email.val().indexOf('@') == -1 || email.val().indexOf('.') == -1){
+						//valid = valid && checkRegexp( email, emailRegex, "이메일형식을 확인해주세요" );
+						updateTips( "이메일 형식을 확인해주세요" );
+						console.log("6 : " + valid);
+						valid = false;
+					}else{
+						valid = true;
+					}
+				}
+				
 				//db 갖다오기
 				//$("form[name='dialogForm']").submit();
-				//document.dialogForm.submit();
 				if ( valid ) {
-					console.log("9 : " + valid);
+					document.dialogForm.submit();
 					dialog.dialog( "close" );
 				}
 				
-				console.log("10 : " + valid);
 				return valid;
-			}
+			}//end of addUser()
 			
 			dialog = $( "#dialog-form" ).dialog({
 				autoOpen: false,
-				height: 800,
-				width: 750,
+				height: 600,
+				width: 550,
 				modal: true,
 				buttons: {
 					"가입하기": addUser,
@@ -220,7 +235,7 @@
 				close: function() {
 					form[0].reset();
 			    }
-			});
+			});//end of dialog 정보
 			
 			form = dialog.find( "form" ).on( "submit", function( event ) {
 				event.preventDefault();
