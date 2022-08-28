@@ -1,13 +1,14 @@
 <%@ page contentType="text/html; charset=euc-kr" %>
-
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
 <head>
 <title>회원 목록 조회</title>
 
+<link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <link rel="stylesheet" href="/css/admin.css" type="text/css">
 <script src="//code.jquery.com/jquery-2.1.4.js" type="text/javascript"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
 <script type="text/javascript">
 $(function(){
@@ -26,26 +27,13 @@ $(function(){
 						"Content-Type" : "application/json"
 					},
 					success : function(JSONData , status) {
-
-						//Debug...
-						alert(status);
-						//Debug...
-						alert("JSONData : \n"+JSONData);
-						
-						displayValue = "<h3>"
-													+"아이디 : "+JSONData.userId+"<br/>"
-													+"이  름 : "+JSONData.userName+"<br/>"
-													+"이메일 : "+JSONData.email+"<br/>"
-													+"ROLE : "+JSONData.role+"<br/>"
-													+"등록일 : "+JSONData.regDateString+"<br/>"
-													+"</h3>";
-						//Debug...									
-						alert("displayValue : " + displayValue);
-						//$("td:contains('전체')").text(displayValue);
-						$("h3").remove();
-						//$( "#"+userId+"" ).html(displayValue);
-						//$( "#"+userId ).html(displayValue);						
-						$( "#dialog" ).dialog();
+						displayValue = "아이디 : "+JSONData.userId
+										+"이  름 : "+JSONData.userName
+										+"이메일 : "+JSONData.email
+										+"ROLE : "+JSONData.role
+										+"등록일 : "+JSONData.regDateString
+						$("#dialog").text(displayValue);
+						$("#dialog").dialog();
 					}
 			});
 	});
@@ -66,7 +54,6 @@ $(function(){
 <body bgcolor="#ffffff" text="#000000">
 
 <div id="dialog" title="Basic dialog">
-  <p>This is the default dialog which is useful for displaying information. The dialog window can be moved, resized and closed with the &apos;x&apos; icon.</p>
 </div>
 
 <div style="width:98%; margin-left:10px;">
