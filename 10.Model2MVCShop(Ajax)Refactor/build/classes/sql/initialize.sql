@@ -1,4 +1,9 @@
 
+
+set pagesize 4000;
+set linesize 4000;
+
+
 DROP TABLE users;
 DROP TABLE Cart;
 DROP TABLE transaction;

@@ -17,5 +17,4 @@
 </c:if>
 <c:if test="${ resultPage.endUnitPage != resultPage.maxPage }">
 	<b id="navigator_end">끝으로</b>
-	<%-- <a href="javascript:fncGetList('${ resultPage.maxPage }')">끝으로</a> --%>
 </c:if>
